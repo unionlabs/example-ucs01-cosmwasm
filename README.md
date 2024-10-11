@@ -1,0 +1,3 @@
+This example demonstrates how to create a CosmWasm contract that calls Union’s UCS01 Relay to execute a cross-chain asset transfer.
+
+Follow the guide at ...

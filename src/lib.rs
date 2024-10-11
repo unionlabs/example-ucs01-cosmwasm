@@ -1,21 +1,16 @@
 use cosmwasm_std::{
-    entry_point, to_json_binary, Binary, DepsMut, Env, MessageInfo, Response, StdResult, WasmMsg, Coin,
+    entry_point, to_json_binary, Binary, Coin, DepsMut, Env, MessageInfo, Response, StdResult,
+    WasmMsg,
 };
 use serde::{Deserialize, Serialize};
-
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct InstantiateMsg {}
 
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum ExecuteMsg {
-    Transfer {
-        recipient: String,
-        amount: u128,
-    },
+    Transfer { recipient: String, amount: u128 },
 }
-
 
 #[entry_point]
 pub fn instantiate(
@@ -26,7 +21,6 @@ pub fn instantiate(
 ) -> StdResult<Response> {
     Ok(Response::new().add_attribute("action", "instantiate"))
 }
-
 
 #[entry_point]
 pub fn execute(
@@ -50,15 +44,15 @@ pub fn execute_transfer(
 ) -> StdResult<Response> {
     let recipient_addr = deps.api.addr_validate(&recipient)?;
 
-    
     let msg = WasmMsg::Execute {
-        contract_addr: "union1m87a5scxnnk83wfwapxlufzm58qe2v65985exff70z95a2yr86yq7hl08h".to_string(),
+        contract_addr: "union1m87a5scxnnk83wfwapxlufzm58qe2v65985exff70z95a2yr86yq7hl08h"
+            .to_string(),
         msg: to_json_binary(&ExecuteMsg::Transfer {
             recipient: recipient_addr.to_string(),
             amount,
         })?,
         funds: vec![Coin {
-            denom: "uusdc".to_string(),  
+            denom: "uusdc".to_string(),
             amount: amount.into(),
         }],
     };

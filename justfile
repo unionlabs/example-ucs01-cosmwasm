@@ -11,6 +11,9 @@ setup:
 
 build:
     cargo build --target wasm32-unknown-unknown --release
+    
+fmt:
+  cargo fmt
 
 [group('cleanup')]
 rm-dots:

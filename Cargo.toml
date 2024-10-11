@@ -1,5 +1,5 @@
 [package]
-name = "transfer-contract"
+name = "example-ucs01-cosmwasm"
 version = "0.1.0"
 edition = "2021"
 

@@ -334,6 +334,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-ucs01-cosmwasm"
+version = "0.1.0"
+dependencies = [
+ "cosmwasm-std",
+ "cw-multi-test",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "ff"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -727,16 +737,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.79",
-]
-
-[[package]]
-name = "transfer-contract"
-version = "0.1.0"
-dependencies = [
- "cosmwasm-std",
- "cw-multi-test",
- "serde",
- "thiserror",
 ]
 
 [[package]]

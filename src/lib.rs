@@ -38,7 +38,7 @@ pub fn execute(
 
 pub fn execute_transfer(
     deps: DepsMut,
-    info: MessageInfo,
+    _info: MessageInfo,
     recipient: String,
     amount: u128,
 ) -> StdResult<Response> {

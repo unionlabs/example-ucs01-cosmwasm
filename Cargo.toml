@@ -4,15 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", 'rlib']
 
 [dependencies]
-cosmwasm-std = { version = "1.0.0", default-features = false, features = ["staking"] }
-serde = { version = "1.0", features = ["derive"] }
-thiserror = "1.0"
+cosmwasm-std = { version = "2.1.4", default-features = false, features = ["std", "staking", "stargate"] }
+serde = { version = "1.0.210", default-features = false, features = ["derive"] }
+thiserror = { version = "1.0.64", default-features = false }
 
 [dev-dependencies]
 cw-multi-test = "0.13.0"
 
 [profile.release]
 opt-level = "z"
+strip = true

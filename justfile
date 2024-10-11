@@ -10,7 +10,7 @@ setup:
     rustup target add wasm32-unknown-unknown
 
 build:
-    cargo build --target wasm32-unknown-unknown --release
+  RUSTFLAGS='-C target-cpu=mvp -C opt-level=z' cargo build --target wasm32-unknown-unknown --no-default-features --lib --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
     
 fmt:
   cargo fmt

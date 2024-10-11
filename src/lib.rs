@@ -1,6 +1,5 @@
 use cosmwasm_std::{
-    entry_point, to_json_binary, Coin, DepsMut, Env, MessageInfo, Response, StdResult,
-    WasmMsg,
+    entry_point, to_json_binary, Coin, DepsMut, Env, MessageInfo, Response, StdResult, WasmMsg,
 };
 use serde::{Deserialize, Serialize};
 

@@ -9,11 +9,20 @@ default: build
 setup:
     rustup target add wasm32-unknown-unknown
 
+export RUSTFLAGS := '-C target-cpu=mvp -C opt-level=z'
+
 build:
-  RUSTFLAGS='-C target-cpu=mvp -C opt-level=z' cargo build --target wasm32-unknown-unknown --no-default-features --lib --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
-    
+    RUSTFLAGS=$RUSTFLAGS cargo build \
+      --target wasm32-unknown-unknown \
+      --no-default-features \
+      --lib \
+      --release \
+      -Z build-std=std,panic_abort \
+      -Z build-std-features=panic_immediate_abort
+
 fmt:
-  cargo fmt
+    cargo fmt
+    just --fmt --unstable
 
 [group('cleanup')]
 rm-dots:

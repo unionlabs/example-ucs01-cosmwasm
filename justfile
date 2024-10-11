@@ -6,8 +6,11 @@ alias b := build
 
 default: build
 
+setup:
+    rustup target add wasm32-unknown-unknown
+
 build:
-    echo "TODO..."
+    cargo build --target wasm32-unknown-unknown --release
 
 [group('cleanup')]
 rm-dots:

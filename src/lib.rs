@@ -8,7 +8,12 @@ pub struct InstantiateMsg {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum ExecuteMsg {
-    Transfer { recipient: String, amount: u128 },
+    Transfer {
+        recipient: String,
+        amount: u128,
+        denom: String,
+        contract_address: String,
+    },
 }
 
 #[entry_point]
@@ -29,9 +34,12 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> StdResult<Response> {
     match msg {
-        ExecuteMsg::Transfer { recipient, amount } => {
-            execute_transfer(deps, info, recipient, amount)
-        }
+        ExecuteMsg::Transfer {
+            recipient,
+            amount,
+            denom,
+            contract_address,
+        } => execute_transfer(deps, info, recipient, amount, denom, contract_address),
     }
 }
 
@@ -40,18 +48,21 @@ pub fn execute_transfer(
     _info: MessageInfo,
     recipient: String,
     amount: u128,
+    denom: String,
+    contract_address: String,
 ) -> StdResult<Response> {
-    let recipient_addr = deps.api.addr_validate(&recipient)?;
+    let recipient_address = deps.api.addr_validate(&recipient)?;
 
     let msg = WasmMsg::Execute {
-        contract_addr: "union1m87a5scxnnk83wfwapxlufzm58qe2v65985exff70z95a2yr86yq7hl08h"
-            .to_string(),
+        contract_addr: contract_address.to_string(),
         msg: to_json_binary(&ExecuteMsg::Transfer {
-            recipient: recipient_addr.to_string(),
+            recipient: recipient_address.to_string(),
             amount,
+            denom: denom.to_string(),
+            contract_address: contract_address.to_string(),
         })?,
         funds: vec![Coin {
-            denom: "uusdc".to_string(),
+            denom: denom.into(),
             amount: amount.into(),
         }],
     };

@@ -1,19 +1,42 @@
+use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{
-    entry_point, to_json_binary, Coin, DepsMut, Env, MessageInfo, Response, StdResult, WasmMsg,
+    entry_point, to_json_binary, Coin, DepsMut, Env, MessageInfo, Response, StdResult, Uint128,
+    WasmMsg,
 };
-use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[cw_serde]
 pub struct InstantiateMsg {}
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[cw_serde]
 pub enum ExecuteMsg {
     Transfer {
-        recipient: String,
-        amount: u128,
+        channel: String,
+        receiver: String,
+        amount: Uint128,
         denom: String,
         contract_address: String,
     },
+}
+
+pub type Fees = BTreeMap<String, Uint128>;
+
+#[cw_serde]
+pub enum Ucs01ExecuteMsg {
+    Transfer(TransferMsg),
+}
+
+/// This is the message we accept via Receive
+#[cw_serde]
+pub struct TransferMsg {
+    /// The local channel to send the packets on
+    pub channel: String,
+    /// The remote address to send to.
+    pub receiver: String,
+    /// How long the packet lives in seconds. If not specified, use default_timeout
+    pub timeout: Option<u64>,
+    /// The memo
+    pub memo: String,
 }
 
 #[entry_point]
@@ -35,41 +58,47 @@ pub fn execute(
 ) -> StdResult<Response> {
     match msg {
         ExecuteMsg::Transfer {
-            recipient,
+            receiver,
+            channel,
             amount,
             denom,
             contract_address,
-        } => execute_transfer(deps, info, recipient, amount, denom, contract_address),
+        } => execute_transfer(
+            deps,
+            info,
+            receiver,
+            amount,
+            denom,
+            channel,
+            contract_address,
+        ),
     }
 }
 
 pub fn execute_transfer(
-    deps: DepsMut,
+    _deps: DepsMut,
     _info: MessageInfo,
-    recipient: String,
-    amount: u128,
+    receiver: String,
+    amount: Uint128,
     denom: String,
+    channel: String,
     contract_address: String,
 ) -> StdResult<Response> {
-    let recipient_address = deps.api.addr_validate(&recipient)?;
-
     let msg = WasmMsg::Execute {
         contract_addr: contract_address.to_string(),
-        msg: to_json_binary(&ExecuteMsg::Transfer {
-            recipient: recipient_address.to_string(),
-            amount,
-            denom: denom.to_string(),
-            contract_address: contract_address.to_string(),
-        })?,
-        funds: vec![Coin {
-            denom: denom.into(),
-            amount: amount.into(),
-        }],
+        msg: to_json_binary(&Ucs01ExecuteMsg::Transfer(TransferMsg {
+            channel,
+            receiver: receiver.clone(),
+            timeout: None,
+            memo: "".into(),
+        }))?,
+
+        funds: vec![Coin { denom, amount }],
     };
 
     Ok(Response::new()
         .add_message(msg)
         .add_attribute("action", "transfer")
-        .add_attribute("recipient", recipient)
+        .add_attribute("recipient", receiver)
         .add_attribute("amount", amount.to_string()))
 }
